@@ -1,3 +1,69 @@
-<p>
-  category-list works!
-</p>
+<nav class="mb-5">
+<!--mb (margin button) deixa uma margem entre a migalha de pao e Categorias-->
+  <ol class="breadcrumb">
+  <!--lista ordenada tipo migalha de pao-->
+    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+    <!--item tipo migalha de pao-->
+    <li class="breadcrumb-item active">Categorias</li>
+  </ol>
+</nav>
+
+<div class="row mb-4">
+<!--linha-->
+  <div class="col-md">
+  <!--garante que vai ocupar toda área livre-->
+    <h1 class="h2 border-left pl-2">
+    <!--por borda a esquerda e com texto espaçado de 2-->
+      Categorias
+    </h1>
+  </div>
+  <div class="col-md">
+    <a routerLink="new" class="btn btn-success float-right">
+    <!--botão verde e alinhado a direita-->
+      + Nova Categoria
+    </a>
+  </div>
+</div>
+
+<table class="table table-hover">
+<!--classe table do bootstrap. hover é para destacar a linha do mouse.-->
+  <thead>
+    <tr class="bg-primary text-light">
+    <!--cor do fundo e do texto-->
+      <th>Categorias</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Lazer</strong><br>
+        <small>Cinema, parque, praia, etc</small>
+      </td>
+      <td>
+        <a [routerLink]="[12, 'edit']" class="btn btn-outline-info btn-sm mr-2">Editar</a>
+        <button (click)="alert('excluir')" class="btn btn-outline-danger btn-sm">Excluir</button>
+      </td>
+    </tr>
+    <tr>
+        <td>
+          <strong>Lazer</strong><br>
+          <small>Cinema, parque, praia, etc</small>
+        </td>
+        <td>
+          <a [routerLink]="[12, 'edit']" class="btn btn-outline-info btn-sm mr-2">Editar</a>
+          <button (click)="alert('excluir')" class="btn btn-outline-danger btn-sm">Excluir</button>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            <strong>Lazer</strong><br>
+            <small>Cinema, parque, praia, etc</small>
+          </td>
+          <td>
+            <a [routerLink]="[12, 'edit']" class="btn btn-outline-info btn-sm mr-2">Editar</a>
+            <button (click)="alert('excluir')" class="btn btn-outline-danger btn-sm">Excluir</button>
+          </td>
+        </tr>
+  </tbody>
+</table>
