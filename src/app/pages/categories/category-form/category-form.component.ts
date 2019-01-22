@@ -120,6 +120,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
       .subscribe(
         category => this.actionsForSuccess(category),
         error => this.actionsForError(error)
+      )
   }
 
   private actionsForSuccess(category: Category){
