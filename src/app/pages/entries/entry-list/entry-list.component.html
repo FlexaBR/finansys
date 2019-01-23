@@ -1,0 +1,62 @@
+<nav class="mb-5">
+<!--mb (margin button) deixa uma margem entre a migalha de pao e Categorias-->
+  <ol class="breadcrumb">
+  <!--lista ordenada tipo migalha de pao-->
+    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+    <!--item tipo migalha de pao-->
+    <li class="breadcrumb-item active">Lançamentos</li>
+  </ol>
+</nav>
+
+<div class="row mb-4">
+<!--linha-->
+  <div class="col-md">
+  <!--garante que vai ocupar toda área livre-->
+    <h1 class="h2 border-left pl-2">
+    <!--por borda a esquerda e com texto espaçado de 2-->
+      Lançamentos
+    </h1>
+  </div>
+  <div class="col-md">
+    <a routerLink="new" class="btn btn-success float-right">
+    <!--botão verde e alinhado a direita-->
+      + Nova Lançamento
+    </a>
+  </div>
+</div>
+
+<table class="table table-hover">
+<!--classe table do bootstrap. hover é para destacar a linha do mouse.-->
+  <thead>
+    <tr class="bg-primary text-light">
+    <!--cor do fundo e do texto-->
+      <th>Lançamentos</th>
+      <th>Categorias</th>
+      <th class="text-right">Valor R$</th>
+      <th class="text-center">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let entry of entries">
+      <td>
+        <strong>{{entry.name}}</strong><br>
+        <small class="text-success">{{entry.date}}</small><br>
+        <small *ngIf="entry.description">{{entry.description}}</small><br>
+      </td>
+      <td>
+        {{entry.category.name}}
+      </td>
+      <td class="text-right">
+        <strong [class.text-success]="entry.type == 'revenue'" [class.text-danger]="entry.type == 'expense'">
+          {{entry.amount}}
+        </strong>
+        <br>
+        <span class="badge badge-light">{{entry.paidText}}</span>
+      </td>
+      <td class="text-center">
+        <a [routerLink]="[entry.id, 'edit']" class="btn btn-outline-info btn-sm mr-2">Editar</a>
+        <button (click)="deleteEntry(entry)" class="btn btn-outline-danger btn-sm">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
