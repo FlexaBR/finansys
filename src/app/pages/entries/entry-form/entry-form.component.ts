@@ -2,8 +2,8 @@ import { Component, OnInit, AfterContentChecked } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { Category } from "../shared/category.model";
-import { CategoryService } from "../shared/category.service";
+import { Entry } from "../shared/entry.model";
+import { EntryService } from "../shared/entry.service";
 
 import { switchMap } from "rxjs/operators";
 //rotas
@@ -12,24 +12,24 @@ import toastr from "toastr";
 //exibe alertas para ações no formulário
 
 @Component({
-  selector: 'app-category-form',
-  templateUrl: './category-form.component.html',
-  styleUrls: ['./category-form.component.css']
+  selector: 'app-entry-form',
+  templateUrl: './entry-form.component.html',
+  styleUrls: ['./entry-form.component.css']
 })
-export class CategoryFormComponent implements OnInit, AfterContentChecked {
+export class EntryFormComponent implements OnInit, AfterContentChecked {
 
   currentAction: string;
   //vai dizer se está criando ou editando recurso (new ou edit)
-  categoryForm: FormGroup;
+  entryForm: FormGroup;
   pageTitle: string;
   //altera dinamicamente o titulo da pagina
   serverErrorMessages: string[] = null;
   submittingForm: boolean = false;
   //para desabilitar o botão depois de um envio
-  category: Category = new Category();
+  entry: Entry = new Entry();
 
   constructor(
-    private categoryService: CategoryService,
+    private entryService: EntryService,
     private route: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder
@@ -40,10 +40,10 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
     //metodos que serão executados
     this.setCurrentAction();
     //executa em sequencia: primeiro - qual ação está sendo executada
-    this.buildCategoryForm();
+    this.buildEntryForm();
     //segundo - constroi o formulario
-    this.loadCategory();
-    //terceiro - carrega a categoria
+    this.loadEntry();
+    //terceiro - carrega a entrada
   }
 
   ngAfterContentChecked() {
@@ -54,40 +54,45 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   submitForm() {
     this.submittingForm = true;
     if(this.currentAction == "new")
-      this.createCategory();
+      this.createEntry();
     else //currentAction = edit
-      this.updateCategory();
+      this.updateEntry();
   }
 
   //Métodos PRIVADOS
   private setCurrentAction() {
     if(this.route.snapshot.url[0].path == "new")
-    //[0] refere-se ao primeiro segmento da url. ex: /categories/new
+    //[0] refere-se ao primeiro segmento da url. ex: /entries/new
       this.currentAction = "new"
     else
       this.currentAction = "edit"
-    //define a ação, se é criar nova categoria ou editar
+    //define a ação, se é criar nova entrada ou editar
   }
 
-  private buildCategoryForm() {
-    this.categoryForm = this.formBuilder.group({
+  private buildEntryForm() {
+    this.entryForm = this.formBuilder.group({
     //cria o formulario
       id: [null],
-      name: [null, [Validators.required, Validators.minLength(4)]],
-      description: [null]
+      name: [null, [Validators.required, Validators.minLength(2)]],
+      description: [null],
+      type: [null, [Validators.required]],
+      amount: [null, [Validators.required]],
+      date: [null, [Validators.required]],
+      paid: [null, [Validators.required]],
+      categoryId: [null, [Validators.required]]
       //campos do formulario
     });
   }
 
-  private loadCategory() {
+  private loadEntry() {
     if (this.currentAction == "edit") {
       this.route.paramMap.pipe(
-        switchMap(params => this.categoryService.getById(+params.get("id")))
+        switchMap(params => this.entryService.getById(+params.get("id")))
       )
       .subscribe(
-        (category) => {
-          this.category = category;
-          this.categoryForm.patchValue(category) //binds loaded category data to CategoryForm
+        (entry) => {
+          this.entry = entry;
+          this.entryForm.patchValue(entry) //binds loaded entry data to EntryForm
         },
         (error) => alert('Ocorreu um erro no servidor, tente mais tarde.')
       )
@@ -96,39 +101,39 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
   private setPageTitle() {
     if (this.currentAction == "new")
-      this.pageTitle = "Cadastro de Nova Categoria"
+      this.pageTitle = "Cadastro de Novo Lançamento"
     else {
-      const categoryName = this.category.name || ""
-      this.pageTitle = "Editando Categoria: " + categoryName;
+      const entryName = this.entry.name || ""
+      this.pageTitle = "Editando Lançamento: " + entryName;
     }
   }
 
-  private createCategory(){
-    const category: Category = Object.assign(new Category(), this.categoryForm.value);
+  private createEntry(){
+    const entry: Entry = Object.assign(new Entry(), this.entryForm.value);
 
-    this.categoryService.create(category)
+    this.entryService.create(entry)
       .subscribe(
-        category => this.actionsForSuccess(category),
+        entry => this.actionsForSuccess(entry),
         error => this.actionsForError(error)
       )
   }
 
-  private updateCategory() {
-    const category: Category = Object.assign(new Category(), this.categoryForm.value);
+  private updateEntry() {
+    const entry: Entry = Object.assign(new Entry(), this.entryForm.value);
 
-    this.categoryService.update(category)
+    this.entryService.update(entry)
       .subscribe(
-        category => this.actionsForSuccess(category),
+        entry => this.actionsForSuccess(entry),
         error => this.actionsForError(error)
       )
   }
 
-  private actionsForSuccess(category: Category){
+  private actionsForSuccess(entry: Entry){
     toastr.success("Solicitação processada com sucesso!");
     
     //redirect/reload component page
-    this.router.navigateByUrl("categories", {skipLocationChange: true}).then(
-      () => this.router.navigate(["categories", category.id, "edit"])
+    this.router.navigateByUrl("entries", {skipLocationChange: true}).then(
+      () => this.router.navigate(["entries", entry.id, "edit"])
     )
   }
 
